@@ -1,0 +1,1 @@
+The following files are for the final project of the Smoothstack Essentials course.
