@@ -5,13 +5,17 @@ import java.util.Scanner;
 abstract class Menu {
 	
 	private String inputPrompt = "\nEnter a menu option: ";
-	private String invalidSelection = "Invalid menu option.";
+	private String invalidSelection = "\nInvalid menu option.";
+	private String returnOption = "Return to previous menu";
+	
+	public String getReturnOption() {
+		return returnOption;
+	}
 	
 	// Run menu.
 	public int runMenu(String description, String[] menu) {
-		//
 		Integer menuOption = null;
-		
+	
 		System.out.println(description);
 		for(int i = 0; i < menu.length; i++) {
 			System.out.println(i + 1 + ") " + menu[i]);
@@ -32,6 +36,7 @@ abstract class Menu {
 			try {
 				String menuOption = options[Integer.parseInt(input) - 1];
 				validOption = Boolean.TRUE;
+				System.out.println("\n\n");
 			} catch(Exception e) {
 				System.out.println(invalidSelection);
 			}

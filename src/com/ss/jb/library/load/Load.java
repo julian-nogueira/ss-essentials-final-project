@@ -4,7 +4,6 @@ import com.ss.jb.library.service.Util;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Load {
@@ -164,18 +163,6 @@ public class Load {
 			+ "(11, 4, 5, '2021-07-18 15:20:09', '2021-09-18 15:20:09', '2021-07-20 12:33:09'),"
 			+ "(11, 1, 7, '2021-07-20 08:41:49', '2021-09-20 08:41:49', NULL)";
 	
-	public void getBooks() throws SQLException {
-		PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM tbl_book");
-		ResultSet rs = pstmt.executeQuery();
-		
-		while(rs.next()) {
-			System.out.println("Book ID: " + rs.getInt("bookId"));
-			System.out.println("Title: " + rs.getString("title"));
-			System.out.println("Publisher ID: " + rs.getInt("pubId"));
-			System.out.println("--------------------");
-		}
-	}
-	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
 		Util util = new Util();
 		Connection conn = null;
@@ -198,7 +185,6 @@ public class Load {
 		} catch(Exception e) {
 			e.printStackTrace();
 			conn.rollback();
-			System.out.println("Could not insert.");
 		} finally {
 			if(conn != null) {
 				conn.close();
