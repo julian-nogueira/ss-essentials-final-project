@@ -8,12 +8,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-abstract class DAO<T> {
+abstract class BaseDAO<T> {
 	
 	protected Connection conn = null;
 	protected Util util = null;
 	
-	public DAO() throws ClassNotFoundException, SQLException {
+	public BaseDAO() throws ClassNotFoundException, SQLException {
 		util = new Util();
 	}
 	
@@ -44,3 +44,7 @@ abstract class DAO<T> {
 	
 	abstract public List<T> extractData(ResultSet rs) throws SQLException;
 }
+
+
+
+

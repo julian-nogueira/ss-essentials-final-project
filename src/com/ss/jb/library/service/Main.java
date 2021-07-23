@@ -5,7 +5,7 @@ import java.sql.SQLException;
 public class Main {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-		MenuMain obj = new MenuMain();
+		MainMenu obj = new MainMenu();
 		obj.runMainMenu();
 	}
 }

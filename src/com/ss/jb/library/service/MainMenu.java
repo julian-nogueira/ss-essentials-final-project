@@ -1,11 +1,11 @@
 package com.ss.jb.library.service;
 
-public class MenuMain extends Menu {
+public class MainMenu extends BaseMenu {
 
 	protected String optionLibrarian = "Librarian";
 	protected String optionAdministrator = "Administrator";
 	protected String optionBorrower = "Borrower";
-	protected String optionQuit = "Quit the program";
+	protected String optionQuit = "-- Quit the program --";
 	protected String description = ""
 			+ "\n====================================================="
 			+ "\n========== Island Breeze Management System =========="
@@ -17,15 +17,14 @@ public class MenuMain extends Menu {
 	
 	protected String[] options = {optionLibrarian, optionAdministrator, optionBorrower, optionQuit};
 	
-	@Override
 	public void runMainMenu() {
 		String selection = null;
 		Integer menuOption = null;
 		
 		try {
-			MenuLibrarian menuLibrarian = new MenuLibrarian();
-			MenuAdministrator menuAdministrator = new MenuAdministrator();
-			MenuBorrower menuBorrower = new MenuBorrower();
+			LibrarianMenu menuLibrarian = new LibrarianMenu();
+			AdministratorMenu menuAdministrator = new AdministratorMenu();
+			BorrowerMenu menuBorrower = new BorrowerMenu();
 			while(true) {
 				menuOption = runMenu(description, options);
 				selection = options[menuOption];

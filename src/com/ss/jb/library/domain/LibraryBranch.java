@@ -1,6 +1,6 @@
 package com.ss.jb.library.domain;
 
-public class DomainLibraryBranch {
+public class LibraryBranch {
 
 	private Integer branchId = null;
 	private String branchName = null;
