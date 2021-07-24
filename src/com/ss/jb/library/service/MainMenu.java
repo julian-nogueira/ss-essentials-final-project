@@ -26,7 +26,7 @@ public class MainMenu extends BaseMenu {
 			AdministratorMenu menuAdministrator = new AdministratorMenu();
 			BorrowerMenu menuBorrower = new BorrowerMenu();
 			while(true) {
-				menuOption = runMenu(description, options);
+				menuOption = runMenu(description, options, Boolean.TRUE);
 				selection = options[menuOption];
 				
 				if(optionLibrarian.equals(selection)) {
@@ -34,7 +34,7 @@ public class MainMenu extends BaseMenu {
 				} else if(optionAdministrator.equals(selection)) {
 					menuAdministrator.runMainMenu();
 				} else if(optionBorrower.equals(selection)) {
-					menuBorrower.runMainMenu();
+					menuBorrower.runAuthenticate();
 				} else if(optionQuit.equals(selection)) {
 					return;
 				}

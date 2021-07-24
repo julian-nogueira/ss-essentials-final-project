@@ -83,7 +83,8 @@ public class Load {
 			+ "(10, 'Chess'),"
 			+ "(11, 'Wellness'),"
 			+ "(12, 'Novel'),"
-			+ "(13, 'Eastern Philosophy');";
+			+ "(13, 'Eastern Philosophy'),"
+			+ "(14, 'Romance');";
 	
 	private String dataTblBookGenres = "INSERT INTO tbl_book_genres(bookId, genre_id)"
 			+ "VALUES(1, 1),"
@@ -170,16 +171,16 @@ public class Load {
 		try {
 			conn = util.getConnection();
 			Load obj = new Load(conn);
+			obj.insert(obj.dataTblLibraryBranch);
 			obj.insert(obj.dataTblAuthor);
+			obj.insert(obj.dataTblPublisher);
 			obj.insert(obj.dataTblBook);
+			obj.insert(obj.dataTblBorrower);
+			obj.insert(obj.dataTblGenre);
 			obj.insert(obj.dataTblBookAuthors);
 			obj.insert(obj.dataTblBookCopies);
 			obj.insert(obj.dataTblBookGenres);
 			obj.insert(obj.dataTblBookLoans);
-			obj.insert(obj.dataTblBorrower);
-			obj.insert(obj.dataTblGenre);
-			obj.insert(obj.dataTblLibraryBranch);
-			obj.insert(obj.dataTblPublisher);
 			conn.commit();
 			System.out.println("Data inserted successfully.");
 		} catch(Exception e) {

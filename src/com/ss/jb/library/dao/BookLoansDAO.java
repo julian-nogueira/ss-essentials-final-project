@@ -1,10 +1,12 @@
 package com.ss.jb.library.dao;
 
+import com.ss.jb.library.domain.Book;
 import com.ss.jb.library.domain.BookLoans;
+import com.ss.jb.library.domain.Borrower;
+import com.ss.jb.library.domain.LibraryBranch;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +27,18 @@ public class BookLoansDAO extends BaseDAO<BookLoans> {
 	public List<BookLoans> readBookLoans() throws SQLException, ClassNotFoundException {
 		return read("SELECT * FROM tbl_book_loans;", new Object[] {});
 	}
+	
+	public List<BookLoans> readBookLoansByBookAndLibraryBranchAndBorrower(Book book, LibraryBranch libraryBranch, Borrower borrower) throws SQLException, ClassNotFoundException {
+		return read("SELECT * FROM tbl_book_loans"
+				+ " WHERE bookId = ? AND branchId = ? AND cardNo = ?;",
+				new Object[] {book.getBookId(), libraryBranch.getBranchId(), borrower.getCardNo()});
+	}
 
 	// Update.
-	public void updateBookLoansByBookIdAndBranchIdAndCardNo(BookLoans bookLoans) throws SQLException, ClassNotFoundException {
-		save("UPDATE tbl_book_loans SET dateOut = ?, dueDate = ?, dateIn = ?, WHERE bookId = ? AND branchId = ? AND cardNo = ?;",
-				new Object[] {bookLoans.getDateOut(), bookLoans.getDueDate(), bookLoans.getDateIn(),
-						bookLoans.getBookId(), bookLoans.getBranchId(), bookLoans.getCardNo()});
+	public void updateBookLoansByBookIdAndBranchIdAndCardNoAndDateOut(BookLoans bookLoans) throws SQLException, ClassNotFoundException {
+		save("UPDATE tbl_book_loans SET dueDate = ?, dateIn = ? WHERE bookId = ? AND branchId = ? AND cardNo = ? AND dateOut = ?;",
+				new Object[] {bookLoans.getDueDate(), bookLoans.getDateIn(),
+						bookLoans.getBookId(), bookLoans.getBranchId(), bookLoans.getCardNo(), bookLoans.getDateOut()});
 	}
 	
 	// Delete.

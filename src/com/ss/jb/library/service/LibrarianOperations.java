@@ -1,10 +1,7 @@
 package com.ss.jb.library.service;
 
-import com.ss.jb.library.dao.AuthorDAO;
 import com.ss.jb.library.dao.BookCopiesDAO;
-import com.ss.jb.library.dao.BookDAO;
 import com.ss.jb.library.dao.LibraryBranchDAO;
-import com.ss.jb.library.domain.Author;
 import com.ss.jb.library.domain.Book;
 import com.ss.jb.library.domain.BookCopies;
 import com.ss.jb.library.domain.LibraryBranch;
@@ -14,22 +11,18 @@ import java.util.List;
 
 public class LibrarianOperations extends BaseMenu {
 
-	private AuthorDAO authorDAO = null;
 	private BookCopiesDAO bookCopiesDAO = null;
-	private BookDAO bookDAO = null;
 	private LibraryBranchDAO libraryBranchDAO = null;
+	private SharedOperations sharedOperations = null;
 	
 	private String descriptionUpdateBranch = ""
-			+ "\n========== Operations: Update Branch ================"
+			+ "\n========== Librarian: Update Branch ================="
 			+ "\n";
 	private String descriptionAddCopiesOfABook = ""
-			+ "\n========== Operations: Add Copies of a Book ========="
+			+ "\n========== Librarian: Add Copies of a Book =========="
 			+ "\n";
 	private String descriptionExistingCopies = ""
 			+ "\nExisting number of copies: ";
-	private String promptQuit = ""
-			+ "\n"
-			+ "\nEnter 'quit' at any prompt to cancel the operation.";
 	private String promptBranchName = ""
 			+ "\nPlease enter a new branch name or enter 'N/A' for no"
 			+ "\nchange: ";
@@ -37,14 +30,11 @@ public class LibrarianOperations extends BaseMenu {
 			+ "\nPlease enter a new branch address or enter 'N/A' for"
 			+ "\nno change: ";
 	private String promptAddCopiesOfABook = "\nEnter new number of copies: ";
-	private String inputNotApplicable = "n/a";
-	private String inputQuit = "quit";
 	
 	public LibrarianOperations() throws ClassNotFoundException, SQLException {
-		authorDAO = new AuthorDAO();
 		bookCopiesDAO = new BookCopiesDAO();
-		bookDAO = new BookDAO();
 		libraryBranchDAO = new LibraryBranchDAO();
+		sharedOperations = new SharedOperations();
 	}
 	
 	public void runUpdateDetails(LibraryBranch libraryBranch) throws SQLException, ClassNotFoundException {
@@ -58,7 +48,7 @@ public class LibrarianOperations extends BaseMenu {
 		input = getData(description, promptBranchName);
 		
 		if(inputQuit.equals(input.toLowerCase())) {
-			System.out.println("\n\n");
+			System.out.println(insertTrailingNewLine);
 			return;
 		} else if(!inputNotApplicable.equals(input.toLowerCase())) {
 			libraryBranch.setBranchName(input);
@@ -67,52 +57,56 @@ public class LibrarianOperations extends BaseMenu {
 		input = getData("", promptBranchAddress);
 		
 		if(inputQuit.equals(input.toLowerCase())) {
-			System.out.println("\n\n");
+			System.out.println(insertTrailingNewLine);
 			return;
 		} else if(!inputNotApplicable.equals(input.toLowerCase())) {
 			libraryBranch.setBranchAddress(input);
 		}
 		
 		libraryBranchDAO.updateLibraryBranch(libraryBranch);
-		System.out.println("\n\n");
+		System.out.println(insertTrailingNewLine);
 	}
 	
 	public void runAddCopiesOfABook(LibraryBranch libraryBranch) throws ClassNotFoundException, SQLException {
-		List<Book> bookList = bookDAO.readBookByLibraryBranch(libraryBranch);
-		Integer size = bookList.size();
-		Integer menuOption = null;
-		String input = null;
-		String[] bookOptions = new String[size + 1];
+		Book book = null;
 		
-		for(int i = 0; i < bookList.size(); i++) {
-			List<Author> author = authorDAO.readAuthorByBook(bookList.get(i));
-			
-			bookOptions[i] = bookList.get(i).getTitle() 
-					+ " by " + author.get(0).getAuthorName();
-		}
+		book = sharedOperations.getBook(descriptionAddCopiesOfABook, Boolean.TRUE);
 		
-		bookOptions[size] = getReturnOption();
-		menuOption = runMenu(descriptionAddCopiesOfABook, bookOptions);
-		
-		if(getReturnOption().equals(bookOptions[menuOption])) {
+		if(book == null) {
 			return;
 		} else {
-			runAddCopiesOfABookSubMenu(libraryBranch, bookList.get(menuOption));
+			runAddCopiesOfABookSubMenu(libraryBranch, book);
 		}
 	}
 	
 	public void runAddCopiesOfABookSubMenu(LibraryBranch libraryBranch, Book book) throws ClassNotFoundException, SQLException {
 		List<BookCopies> bookCopiesList = bookCopiesDAO.readBookCopiesByLibraryBranchAndBook(libraryBranch, book);
-		Integer noOfCopies = null;
+		Integer currentNoOfCopies = null;
+		Integer newNoOfCopies = null;
 		String libraryBranchBranchName = "\nLibrary Branch: " + libraryBranch.getBranchName() + "\n";
 		String bookTitle = "\nBook: " + book.getTitle() + "\n";
-		String existingCopies = descriptionExistingCopies + bookCopiesList.get(0).getNoOfCopies();
+	
+		if(bookCopiesList.size() == 1) {
+			currentNoOfCopies = bookCopiesList.get(0).getNoOfCopies();
+		} else if(bookCopiesList.size() == 0){
+			currentNoOfCopies = 0;
+		}
+		
+		String existingCopies = descriptionExistingCopies + currentNoOfCopies;
 		String description = descriptionAddCopiesOfABook + libraryBranchBranchName + bookTitle + existingCopies;
 		
-		noOfCopies = getInteger(description, promptAddCopiesOfABook);
-		bookCopiesList.get(0).setNoOfCopies(noOfCopies);
+		newNoOfCopies = getInteger(description, promptAddCopiesOfABook, Boolean.TRUE);
 		
-		bookCopiesDAO.updateBookCopies(bookCopiesList.get(0));
+		if(bookCopiesList.size() == 1) {
+			bookCopiesList.get(0).setNoOfCopies(newNoOfCopies);
+			bookCopiesDAO.updateBookCopies(bookCopiesList.get(0));
+		} else if(bookCopiesList.size() == 0 && newNoOfCopies > 0){
+			BookCopies bookCopies = new BookCopies();
+			bookCopies.setBookId(book.getBookId());
+			bookCopies.setBranchId(libraryBranch.getBranchId());
+			bookCopies.setNoOfCopies(newNoOfCopies);
+			bookCopiesDAO.createBookCopies(bookCopies);
+		}
 	}
 }
 

@@ -1,6 +1,7 @@
 package com.ss.jb.library.dao;
 
 import com.ss.jb.library.domain.Book;
+import com.ss.jb.library.domain.Borrower;
 import com.ss.jb.library.domain.LibraryBranch;
 
 import java.sql.ResultSet;
@@ -29,8 +30,17 @@ public class BookDAO extends BaseDAO<Book> {
 		return read("SELECT * FROM tbl_book"
 				+ " JOIN tbl_book_copies ON tbl_book_copies.bookId = tbl_book.bookId"
 				+ " JOIN tbl_library_branch ON tbl_library_branch.branchId = tbl_book_copies.branchId"
-				+ " WHERE tbl_library_branch.branchId = ?;",
+				+ " WHERE tbl_library_branch.branchId = ? AND tbl_book_copies.noOfCopies > 0;",
 				new Object[] {libraryBranch.getBranchId()});
+	}
+	
+	public List<Book> readBookByLibraryBranchAndBorrower(LibraryBranch libraryBranch, Borrower borrower) throws SQLException, ClassNotFoundException {
+		return read("SELECT * FROM tbl_book"
+				+ " JOIN tbl_book_loans ON tbl_book_loans.bookId = tbl_book.bookId"
+				+ " JOIN tbl_library_branch ON tbl_library_branch.branchId = tbl_book_loans.branchId"
+				+ " JOIN tbl_borrower ON tbl_borrower.cardNo = tbl_book_loans.cardNo"
+				+ " WHERE tbl_library_branch.branchId = ? AND tbl_borrower.cardNo = ? AND tbl_book_loans.dateIn IS NULL;",
+				new Object[] {libraryBranch.getBranchId(), borrower.getCardNo()});
 	}
 
 	// Update.
