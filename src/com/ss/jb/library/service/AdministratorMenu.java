@@ -121,6 +121,8 @@ public class AdministratorMenu extends BaseMenu {
 			try {
 				if(optionReturnToPreviousMenu.equals(operation)) {
 					return;
+				} else if(optionAdd.equals(operation)) {
+					administratorAddOperations.addAuthor();
 				} else if(optionRead.equals(operation)) {
 					administratorReadOperations.readAuthor();
 				}
@@ -138,6 +140,8 @@ public class AdministratorMenu extends BaseMenu {
 			try {
 				if(optionReturnToPreviousMenu.equals(operation)) {
 					return;
+				} else if(optionAdd.equals(operation)) {
+					administratorAddOperations.addGenre();
 				} else if(optionRead.equals(operation)) {
 					administratorReadOperations.readGenre();
 				}
@@ -155,6 +159,8 @@ public class AdministratorMenu extends BaseMenu {
 			try {
 				if(optionReturnToPreviousMenu.equals(operation)) {
 					return;
+				} else if(optionAdd.equals(operation)) {
+					administratorAddOperations.addPublisher();
 				} else if(optionRead.equals(operation)) {
 					administratorReadOperations.readPublisher();
 				}
@@ -172,6 +178,8 @@ public class AdministratorMenu extends BaseMenu {
 			try {
 				if(optionReturnToPreviousMenu.equals(operation)) {
 					return;
+				} else if(optionAdd.equals(operation)) {
+					administratorAddOperations.addLibraryBranch();
 				} else if(optionRead.equals(operation)) {
 					administratorReadOperations.readLibraryBranch();
 				}
@@ -189,6 +197,8 @@ public class AdministratorMenu extends BaseMenu {
 			try {
 				if(optionReturnToPreviousMenu.equals(operation)) {
 					return;
+				} else if(optionAdd.equals(operation)) {
+					administratorAddOperations.addBorrower();
 				} else if(optionRead.equals(operation)) {
 					administratorReadOperations.readBorrower();
 				}

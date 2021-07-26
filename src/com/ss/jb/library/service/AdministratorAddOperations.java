@@ -4,13 +4,17 @@ import com.ss.jb.library.dao.AuthorDAO;
 import com.ss.jb.library.dao.BookAuthorsDAO;
 import com.ss.jb.library.dao.BookDAO;
 import com.ss.jb.library.dao.BookGenresDAO;
+import com.ss.jb.library.dao.BorrowerDAO;
 import com.ss.jb.library.dao.GenreDAO;
+import com.ss.jb.library.dao.LibraryBranchDAO;
 import com.ss.jb.library.dao.PublisherDAO;
 import com.ss.jb.library.domain.Author;
 import com.ss.jb.library.domain.Book;
 import com.ss.jb.library.domain.BookAuthors;
 import com.ss.jb.library.domain.BookGenres;
+import com.ss.jb.library.domain.Borrower;
 import com.ss.jb.library.domain.Genre;
+import com.ss.jb.library.domain.LibraryBranch;
 import com.ss.jb.library.domain.Publisher;
 
 import java.sql.Connection;
@@ -24,12 +28,36 @@ public class AdministratorAddOperations extends MainMenu {
 	
 	private String descriptionAddBook = ""
 			+ "\n========== Administrator: Add Book ==================";
+	private String descriptionAddAuthor = ""
+			+ "\n========== Administrator: Add Author ================";
+	private String descriptionAddGenre = ""
+			+ "\n========== Administrator: Add Genre =================";
+	private String descriptionAddPublisher = ""
+			+ "\n========== Administrator: Add Publisher =============";
+	private String descriptionAddLibraryBranch = ""
+			+ "\n========== Administrator: Add Library Branch ========";
+	private String descriptionAddBorrower = ""
+			+ "\n========== Administrator: Add Borrower ==============";
 	private String descriptionSelectAnAuthor = "\nSelect an author from the list.\n";
 	private String descriptionSelectAGenre = "\nSelect a genre from the list.\n";
 	private String descriptionSelectAPublisher = "\nSelect a publisher from the list.\n";
 	private String descriptionBookSuccessfullyAdded = "\nThe book was successfully added.";
-	private String descriptionBookNotSuccessfullyAdded = "\nThe book was unable to be added.";
+	private String descriptionAuthorSuccessfullyAdded = "\nThe author was successfully added.";
+	private String descriptionGenreSuccessfullyAdded = "\nThe genre was successfully added.";
+	private String descriptionPublisherSuccessfullyAdded = "\nThe publisher was successfully added.";
+	private String descriptionLibraryBranchSuccessfullyAdded = "\nThe library branch was successfully added.";
+	private String descriptionBorrowerSuccessfullyAdded = "\nThe borrower was successfully added.";
 	private String promptEnterTitle = "\nPlease enter the title: ";
+	private String promptEnterAuthorName = "\nPlease enter the name of the author: ";
+	private String promptEnterGenre = "\nPlease enter the name of the genre: ";
+	private String promptEnterPublisherName = "\nPlease enter the name of the publisher: ";
+	private String promptEnterPublisherAddress = "\nPlease enter the address of the publisher: ";
+	private String promptEnterPublisherPhone = "\nPlease enter the phone number of the publisher: ";
+	private String promptEnterBranchName = "\nPlease enter the name of the library branch: ";
+	private String promptEnterBranchAddress = "\nPlease enter the address of the library branch: ";
+	private String promptEnterBorrowerName = "\nPlease enter the name of the borrower: ";
+	private String promptEnterBorrowerAddress = "\nPlease enter the address of the borrower: ";
+	private String promptEnterBorrowerPhone = "\nPlease enter the phone number of the borrower: ";
 	private String promptAdditionalAuthor = "\nIs there an additional author?";
 	private String promptAdditionalGenre = "\nIs there an additional genre?";
 	private String optionYes = "Yes";
@@ -125,8 +153,7 @@ public class AdministratorAddOperations extends MainMenu {
 		}
 	}
 	
-	public Boolean addBook(String title, List<Integer> authorIds, List<Integer> genreIds, Integer publisherId) throws SQLException {
-		Boolean result = Boolean.FALSE;
+	public void addBook(String title, List<Integer> authorIds, List<Integer> genreIds, Integer publisherId) throws SQLException {
 		Connection conn = null;
 		try {
 			conn = util.getConnection();
@@ -159,18 +186,148 @@ public class AdministratorAddOperations extends MainMenu {
 		
 			// Commit all changes.
 			conn.commit();
-			result = Boolean.TRUE;
-		
 			System.out.println(descriptionBookSuccessfullyAdded);
-			return result;
 		} catch(Exception e) {
 			// Roll changes back if any query failed.
 			conn.rollback();
 			e.printStackTrace();
-			System.out.println(descriptionBookNotSuccessfullyAdded);
-			return result;
 		} finally {
 			conn.close();
+		}
+	}
+	
+	public void addAuthor() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			AuthorDAO authorDAO = new AuthorDAO(conn);
+			Author author = new Author();
+			String authorName = null;
+			
+			System.out.println(descriptionAddAuthor);
+			
+			authorName = getData("", promptEnterAuthorName);
+			author.setAuthorName(authorName);
+			authorDAO.createAuthor(author);
+
+			conn.commit();
+			System.out.println(descriptionAuthorSuccessfullyAdded);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			conn.close();
+			System.out.println(insertTrailingNewLine);
+		}
+	}
+	
+	public void addGenre() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			GenreDAO genreDAO = new GenreDAO(conn);
+			Genre genre = new Genre();
+			String genreName = null;
+
+			System.out.println(descriptionAddGenre);
+			
+			genreName = getData("", promptEnterGenre);
+			genre.setGenreName(genreName);
+			genreDAO.createGenre(genre);
+			
+			conn.commit();
+			System.out.println(descriptionGenreSuccessfullyAdded);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			conn.close();
+			System.out.println(insertTrailingNewLine);
+		}
+	}
+	
+	public void addPublisher() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			PublisherDAO publisherDAO = new PublisherDAO(conn);
+			Publisher publisher = new Publisher();
+			String publisherName = null;
+			String publisherAddress = null;
+			String publisherPhone = null;
+
+			System.out.println(descriptionAddPublisher);
+			
+			publisherName = getData("", promptEnterPublisherName);
+			publisherAddress = getData("", promptEnterPublisherAddress);
+			publisherPhone = getData("", promptEnterPublisherPhone);
+			publisher.setPublisherName(publisherName);
+			publisher.setPublisherAddress(publisherAddress);
+			publisher.setPublisherPhone(publisherPhone);
+			publisherDAO.createPublisher(publisher);
+			
+			conn.commit();
+			System.out.println(descriptionPublisherSuccessfullyAdded);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			conn.close();
+			System.out.println(insertTrailingNewLine);
+		}
+	}
+	
+	public void addLibraryBranch() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			LibraryBranchDAO libraryBranchDAO = new LibraryBranchDAO(conn);
+			LibraryBranch libraryBranch = new LibraryBranch();
+			String branchName = null;
+			String branchAddress = null;
+
+			System.out.println(descriptionAddLibraryBranch);
+			
+			branchName = getData("", promptEnterBranchName);
+			branchAddress = getData("", promptEnterBranchAddress);
+			libraryBranch.setBranchName(branchName);
+			libraryBranch.setBranchAddress(branchAddress);
+			libraryBranchDAO.createLibraryBranch(libraryBranch);
+			
+			conn.commit();
+			System.out.println(descriptionLibraryBranchSuccessfullyAdded);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			conn.close();
+			System.out.println(insertTrailingNewLine);
+		}
+	}
+	
+	public void addBorrower() throws SQLException {
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BorrowerDAO borrowerDAO = new BorrowerDAO(conn);
+			Borrower borrower = new Borrower();
+			String borrowerName = null;
+			String borrowerAddress = null;
+			String borrowerPhone = null;
+
+			System.out.println(descriptionAddBorrower);
+			
+			borrowerName = getData("", promptEnterBorrowerName);
+			borrowerAddress = getData("", promptEnterBorrowerAddress);
+			borrowerPhone = getData("", promptEnterBorrowerPhone);
+			borrower.setName(borrowerName);
+			borrower.setAddress(borrowerAddress);
+			borrower.setPhone(borrowerPhone);
+			borrowerDAO.createBorrower(borrower);
+			
+			conn.commit();
+			System.out.println(descriptionBorrowerSuccessfullyAdded);
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			conn.close();
+			System.out.println(insertTrailingNewLine);
 		}
 	}
 }
