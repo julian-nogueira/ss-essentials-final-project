@@ -1,7 +1,9 @@
 package com.ss.jb.library.dao;
 
+import com.ss.jb.library.domain.Book;
 import com.ss.jb.library.domain.Genre;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,8 +11,8 @@ import java.util.List;
 
 public class GenreDAO extends BaseDAO<Genre> {
 	
-	public GenreDAO() throws ClassNotFoundException, SQLException {
-		super();
+	public GenreDAO(Connection conn) throws ClassNotFoundException, SQLException {
+		super(conn);
 	}
 	
 	// Create.
@@ -22,6 +24,14 @@ public class GenreDAO extends BaseDAO<Genre> {
 	// Read.
 	public List<Genre> readGenre() throws SQLException, ClassNotFoundException {
 		return read("SELECT * FROM tbl_genre;", new Object[] {});
+	}
+	
+	public List<Genre> readGenreByBook(Book book) throws SQLException, ClassNotFoundException {
+		return read("SELECT * FROM tbl_genre"
+				+ " JOIN tbl_book_genres ON tbl_book_genres.genre_id = tbl_genre.genre_id"
+				+ " JOIN tbl_book ON tbl_book.bookId = tbl_book_genres.bookId"
+				+ " WHERE tbl_book.bookId = ?;",
+				new Object[] {book.getBookId()});
 	}
 
 	// Update.
@@ -45,7 +55,6 @@ public class GenreDAO extends BaseDAO<Genre> {
 			genre.setGenreName(rs.getString("genre_name"));
 			genreList.add(genre);
 		}
-		conn.close();
 		return genreList;
 	}
 }

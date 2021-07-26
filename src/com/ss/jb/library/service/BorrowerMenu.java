@@ -4,12 +4,13 @@ import com.ss.jb.library.dao.BorrowerDAO;
 import com.ss.jb.library.domain.Borrower;
 import com.ss.jb.library.domain.LibraryBranch;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 public class BorrowerMenu extends BaseMenu {
 	
-	private BorrowerDAO borrowerDAO = null;
+	private Util util = null;
 	private BorrowerOperations borrowerOperations = null;
 	private SharedOperations sharedOperations = null;
 	
@@ -36,20 +37,24 @@ public class BorrowerMenu extends BaseMenu {
 	private String[] optionsMainMenu = {optionCheckOutABook, optionReturnABook, optionReturnToPreviousMenu};
 	
 	public BorrowerMenu() throws ClassNotFoundException, SQLException {
-		borrowerDAO = new BorrowerDAO();
+		util = new Util();
 		borrowerOperations = new BorrowerOperations();
 		sharedOperations = new SharedOperations();
 	}
 
-	public void runAuthenticate() {
-		Integer cardNo = null;
-	
-		cardNo = getInteger(descriptionAuthenticate, promptEnterCardNo, Boolean.FALSE);
-
+	public void runAuthenticate() throws SQLException {
+		Connection conn = null;
 		try {
+			conn = util.getConnection();
+			BorrowerDAO borrowerDAO = new BorrowerDAO(conn);
+			Integer cardNo = null;
+		
+			cardNo = getInteger(descriptionAuthenticate, promptEnterCardNo, Boolean.FALSE);
+
 			List<Borrower> borrowerList = borrowerDAO.readBorrower();
 			Borrower borrower = null;
 			Boolean validBorrower = Boolean.FALSE;
+			
 			for(int i = 0; i < borrowerList.size(); i++) {
 				if(borrowerList.get(i).getCardNo() == cardNo) {
 					borrower = borrowerList.get(i);
@@ -57,6 +62,7 @@ public class BorrowerMenu extends BaseMenu {
 					break;
 				}
 			}
+			
 			if(validBorrower) {
 				System.out.println(descriptionValidCardNo);
 				runMainMenu(borrower);
@@ -65,6 +71,8 @@ public class BorrowerMenu extends BaseMenu {
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
+		} finally {
+			conn.close();
 		}
 	}
 	

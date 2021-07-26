@@ -1,7 +1,9 @@
 package com.ss.jb.library.dao;
 
+import com.ss.jb.library.domain.Book;
 import com.ss.jb.library.domain.Publisher;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,8 +11,8 @@ import java.util.List;
 
 public class PublisherDAO extends BaseDAO<Publisher> {
 	
-	public PublisherDAO() throws ClassNotFoundException, SQLException {
-		super();
+	public PublisherDAO(Connection conn) throws ClassNotFoundException, SQLException {
+		super(conn);
 	}
 	
 	// Create.
@@ -22,6 +24,13 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 	// Read.
 	public List<Publisher> readPublisher() throws SQLException, ClassNotFoundException {
 		return read("SELECT * FROM tbl_publisher;", new Object[] {});
+	}
+	
+	public List<Publisher> readPublisherByBook(Book book) throws SQLException, ClassNotFoundException {
+		return read("SELECT * FROM tbl_publisher"
+				+ " JOIN tbl_book ON tbl_book.pubId = tbl_publisher.publisherId"
+				+ " WHERE tbl_book.bookId = ?;",
+				new Object[] {book.getPubId()});
 	}
 
 	// Update.
@@ -47,7 +56,6 @@ public class PublisherDAO extends BaseDAO<Publisher> {
 			publisher.setPublisherPhone(rs.getString("publisherPhone"));
 			publisherList.add(publisher);
 		}
-		conn.close();
 		return publisherList;
 	}
 }

@@ -2,6 +2,7 @@ package com.ss.jb.library.dao;
 
 import com.ss.jb.library.domain.LibraryBranch;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,8 +10,8 @@ import java.util.List;
 
 public class LibraryBranchDAO extends BaseDAO<LibraryBranch> {
 	
-	public LibraryBranchDAO() throws ClassNotFoundException, SQLException {
-		super();
+	public LibraryBranchDAO(Connection conn) throws ClassNotFoundException, SQLException {
+		super(conn);
 	}
 
 	// Create.
@@ -45,7 +46,6 @@ public class LibraryBranchDAO extends BaseDAO<LibraryBranch> {
 			libraryBranch.setBranchAddress(rs.getString("branchAddress"));
 			libraryBranchList.add(libraryBranch);
 		}
-		conn.close();
 		return libraryBranchList;
 	}
 }

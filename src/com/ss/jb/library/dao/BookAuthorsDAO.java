@@ -2,6 +2,7 @@ package com.ss.jb.library.dao;
 
 import com.ss.jb.library.domain.BookAuthors;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,8 +10,8 @@ import java.util.List;
 
 public class BookAuthorsDAO extends BaseDAO<BookAuthors> {
 
-	public BookAuthorsDAO() throws ClassNotFoundException, SQLException {
-		super();
+	public BookAuthorsDAO(Connection conn) throws ClassNotFoundException, SQLException {
+		super(conn);
 	}
 	
 	// Create.
@@ -45,7 +46,6 @@ public class BookAuthorsDAO extends BaseDAO<BookAuthors> {
 			bookAuthors.setAuthorId(rs.getInt("authorId"));
 			bookAuthorsList.add(bookAuthors);
 		}
-		conn.close();
 		return bookAuthorsList;
 	}
 }

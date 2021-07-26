@@ -6,6 +6,7 @@ import com.ss.jb.library.domain.BookLoans;
 import com.ss.jb.library.domain.Borrower;
 import com.ss.jb.library.domain.LibraryBranch;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class BorrowerOperations extends BaseMenu {
 	
-	private BookLoansDAO bookLoansDAO = null;
+	private Util util = null;
 	private SharedOperations sharedOperations = null;
 	
 	private String descriptionCheckOutABook = ""
@@ -30,7 +31,7 @@ public class BorrowerOperations extends BaseMenu {
 			
 	
 	public BorrowerOperations() throws ClassNotFoundException, SQLException {
-		bookLoansDAO = new BookLoansDAO();
+		util = new Util();
 		sharedOperations = new SharedOperations();
 	}
 
@@ -51,21 +52,31 @@ public class BorrowerOperations extends BaseMenu {
 	}
 	
 	public void checkOutABook(Book book, LibraryBranch libraryBranch, Borrower borrower) throws ClassNotFoundException, SQLException {
-		BookLoans bookLoans = new BookLoans();
-		LocalDateTime now = LocalDateTime.now();
-		
-		Timestamp dateOut = Timestamp.valueOf(now);
-		Timestamp dateIn = null;
-		Timestamp dueDate = Timestamp.valueOf(now.plusDays(7));
-		
-		bookLoans.setBookId(book.getBookId());
-		bookLoans.setBranchId(libraryBranch.getBranchId());
-		bookLoans.setCardNo(borrower.getCardNo());
-		bookLoans.setDateOut(dateOut);
-		bookLoans.setDateIn(dateIn);
-		bookLoans.setDueDate(dueDate);
-		
-		bookLoansDAO.createBookLoans(bookLoans);
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookLoansDAO bookLoansDAO = new BookLoansDAO(conn);
+			BookLoans bookLoans = new BookLoans();
+			LocalDateTime now = LocalDateTime.now();
+			
+			Timestamp dateOut = Timestamp.valueOf(now);
+			Timestamp dateIn = null;
+			Timestamp dueDate = Timestamp.valueOf(now.plusDays(7));
+			
+			bookLoans.setBookId(book.getBookId());
+			bookLoans.setBranchId(libraryBranch.getBranchId());
+			bookLoans.setCardNo(borrower.getCardNo());
+			bookLoans.setDateOut(dateOut);
+			bookLoans.setDateIn(dateIn);
+			bookLoans.setDueDate(dueDate);
+			
+			bookLoansDAO.createBookLoans(bookLoans);
+			conn.commit();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			conn.close();
+		}
 	}
 	
 	public void runReturnABook(LibraryBranch libraryBranch, Borrower borrower) throws ClassNotFoundException, SQLException {
@@ -85,14 +96,25 @@ public class BorrowerOperations extends BaseMenu {
 	}
 	
 	public void returnABook(Book book, LibraryBranch libraryBranch, Borrower borrower) throws ClassNotFoundException, SQLException {
-		List<BookLoans> bookLoansList = bookLoansDAO.readBookLoansByBookAndLibraryBranchAndBorrower(book, libraryBranch, borrower);
-		BookLoans bookLoans = bookLoansList.get(0);
-		LocalDateTime now = LocalDateTime.now();
-		Timestamp dateIn = Timestamp.valueOf(now);
-		
-		bookLoans.setDateIn(dateIn);
-		
-		bookLoansDAO.updateBookLoansByBookIdAndBranchIdAndCardNoAndDateOut(bookLoans);
+		Connection conn = null;
+		try {
+			conn = util.getConnection();
+			BookLoansDAO bookLoansDAO = new BookLoansDAO(conn);
+			List<BookLoans> bookLoansList = bookLoansDAO.readBookLoansByBookAndLibraryBranchAndBorrowerAndDateInNull(book, libraryBranch, borrower);
+			
+			BookLoans bookLoans = bookLoansList.get(0);
+			LocalDateTime now = LocalDateTime.now();
+			Timestamp dateIn = Timestamp.valueOf(now);
+			
+			bookLoans.setDateIn(dateIn);
+			
+			bookLoansDAO.updateBookLoansByBookIdAndBranchIdAndCardNoAndDateOut(bookLoans);
+			conn.commit();
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			conn.close();
+		}
 	}
 }
 

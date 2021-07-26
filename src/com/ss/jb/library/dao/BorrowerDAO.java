@@ -2,6 +2,7 @@ package com.ss.jb.library.dao;
 
 import com.ss.jb.library.domain.Borrower;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,8 +10,8 @@ import java.util.List;
 
 public class BorrowerDAO extends BaseDAO<Borrower> {
 	
-	public BorrowerDAO() throws ClassNotFoundException, SQLException {
-		super();
+	public BorrowerDAO(Connection conn) throws ClassNotFoundException, SQLException {
+		super(conn);
 	}
 	
 	// Create.
@@ -47,7 +48,6 @@ public class BorrowerDAO extends BaseDAO<Borrower> {
 			borrower.setPhone(rs.getString("phone"));
 			borrowerList.add(borrower);
 		}
-		conn.close();
 		return borrowerList;
 	}
 }

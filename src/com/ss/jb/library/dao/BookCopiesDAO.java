@@ -4,6 +4,7 @@ import com.ss.jb.library.domain.Book;
 import com.ss.jb.library.domain.BookCopies;
 import com.ss.jb.library.domain.LibraryBranch;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,8 +12,8 @@ import java.util.List;
 
 public class BookCopiesDAO extends BaseDAO<BookCopies> {
 
-	public BookCopiesDAO() throws ClassNotFoundException, SQLException {
-		super();
+	public BookCopiesDAO(Connection conn) throws ClassNotFoundException, SQLException {
+		super(conn);
 	}
 	
 	// Create.
@@ -57,7 +58,6 @@ public class BookCopiesDAO extends BaseDAO<BookCopies> {
 			bookCopies.setNoOfCopies(rs.getInt("noOfCopies"));
 			bookCopiesList.add(bookCopies);
 		}
-		conn.close();
 		return bookCopiesList;
 	}
 }

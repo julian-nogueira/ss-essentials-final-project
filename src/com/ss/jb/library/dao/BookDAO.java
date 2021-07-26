@@ -4,6 +4,7 @@ import com.ss.jb.library.domain.Book;
 import com.ss.jb.library.domain.Borrower;
 import com.ss.jb.library.domain.LibraryBranch;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,13 +12,13 @@ import java.util.List;
 
 public class BookDAO extends BaseDAO<Book> {
 	
-	public BookDAO() throws ClassNotFoundException, SQLException {
-		super();
+	public BookDAO(Connection conn) throws ClassNotFoundException, SQLException {
+		super(conn);
 	}
 	
 	// Create.
-	public void createBook(Book book) throws SQLException, ClassNotFoundException {
-		save("INSERT INTO tbl_book(title, pubId) VALUES(?, ?);",
+	public Integer createBook(Book book) throws SQLException, ClassNotFoundException {
+		return saveReturnPrimaryKey("INSERT INTO tbl_book(title, pubId) VALUES(?, ?);",
 				new Object[] {book.getTitle(), book.getPubId()});
 	}
 
@@ -65,7 +66,6 @@ public class BookDAO extends BaseDAO<Book> {
 			book.setTitle(rs.getString("title"));
 			bookList.add(book);
 		}
-		conn.close();
 		return bookList;
 	}
 }
